@@ -133,6 +133,23 @@ def gestion_un_producto(id):
             return {
                 'message': 'Producto actualizado exitosamente'
             }
+    elif request.method== 'DELETE':
+        resultado = validar_producto(id)
+        if resultado is None:
+            return {
+                'message': 'Producto no existe'
+            }
+        else:
+            conexion = mysql.connection.cursor()
+            #primero eliminar de almacen
+            conexion.execute("DELETE FROM productos WHERE id= %s",[id])
+            mysql.connection.commit()
+            conexion.close()
+
+            return {
+                'message': 'Producto eliminado exitosamente'
+            }
+        pass
 
 
 # load_dotenv > cargamos todas las variables definidas en el archivo .env como si fueran variables de entorno
