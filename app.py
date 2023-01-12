@@ -22,11 +22,11 @@ Migrate(app,conexion)
 
 @app.before_first_request
 def inicializadora():
-
     #realizar la creacion de todos los modelos de nuestro proyecto como tablas en la base de datos
-    
     #conexion.create_all()
     pass
+    
 
 if __name__=='__main__':
     app.run(debug=True)
+    
