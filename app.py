@@ -3,14 +3,21 @@ from os import environ
 from configuracion import conexion
 from dotenv import load_dotenv
 from flask_migrate import Migrate
+from flask_restful import Api
 
 from models.categorias_model import Categoria
 from models.productos_model import Producto
+from models.categorias_productos_model import  CategoriaProducto
+
+from controllers.categoria_controller import CategoriasController, CategoriaController
 #aca utilizaremos el archivo .env para las variables de entorno
 load_dotenv()
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI']=environ.get('DATABASE_URL')
+
+api = Api(app)
+
 
 #iniciar la aplicacion de SQLAlchemy con nuestra aplicacion de flash
 conexion.init_app(app)
@@ -26,6 +33,8 @@ def inicializadora():
     #conexion.create_all()
     pass
     
+api.add_resource(CategoriasController, '/categorias')
+api.add_resource(CategoriaController, '/categoria/<int:id>')
 
 if __name__=='__main__':
     app.run(debug=True)
