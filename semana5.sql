@@ -5,4 +5,6 @@ CREATE DATABASE minimarket_productos ;
 USE minimarket_productos ;
 SELECT * FROM alembic_version;
 
+INSERT INTO catgeorias VALUES (DEFAULT, 'Abarrotes');
 
+SELECT * FROM CATEGORIAS
