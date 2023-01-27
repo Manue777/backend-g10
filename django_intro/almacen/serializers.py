@@ -3,12 +3,12 @@ from .models import ProductosModel
 
 
 class ProductosSerializer(serializers.ModelSerializer):
-    #estado = serializers.BooleanField(read_only=True)
+    estado = serializers.BooleanField(read_only=True)
     class Meta:
         model = ProductosModel
-        fields = ['nombre', 'precio']
-         # fields = '__all__'
-        # exclude = ['estado']
+        # fields = ['nombre', 'precio']
+        fields = '__all__'
+        #exclude = ['estado']
 
  #class CategoriasSerializer(serializers.ModelSerializer):
      #class Meta:
