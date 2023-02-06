@@ -18,3 +18,11 @@ class PlatoSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlatoModel
         exclude= ['disponibilidad']
+        # depth=1
+        # el depth solo se recomienda para serializadores que son para mostrar es decir para devolver info mas no para recibir info ya que piden sub nodos que no son del todo correcto 
+
+class CategoriaConPlatosSerializer(serializers.ModelSerializer):
+    class Meta:
+        model= CategoriaModel
+        fields='__all__'
+        
