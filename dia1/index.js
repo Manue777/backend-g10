@@ -1,7 +1,14 @@
 const express=require ('express');
 
+
+//const prisma = new PrismaCliente
 //se va copiar toda la funcionalidad de la librerioa en la variable sevridor
 const servidor =express ();
+//que ahora mi servidor podra convertir la informacion entrante para los JSON
+//middleware para convertir la informacion entrante a un formato legible
+servidor.use(express.json());
+
+//servidor.use(express.urlencoderd())
 
 servidor.get('/',(req,res)=>{
     //req> es la informacion que me envia el cliente
