@@ -1,57 +1,73 @@
 import bcrypt from "bcryptjs";
-import  jwt  from "jsonwebtoken";
+import jwt from "jsonwebtoken";
+import { UsuarioModel } from "../models/usuario.model.js";
 
 const usuarios = [];
 
 export const registroUsuario = async (req, res) => {
   // {'nombre': 'eduardo', 'apellido': 'de rivero', 'correo': 'ederiveroman@gmail.com', 'password':'Welcome123'}
   const data = req.body;
-  const passwordHashed = bcrypt.hashSync(data.password, 10);
-  console.log(passwordHashed);
+  try {
+    const nuevoUsuario = await UsuarioModel.create(data);
 
-  usuarios.push({ ...data, password: passwordHashed });
+    return res
+      .json({
+        message: "Usuario creado exitosamente",
+        content: nuevoUsuario.toJSON(),
+      })
+      .status(201);
+  } catch (error) {
+    if (error.name === "MongoServerError" && error.code === 11000) {
+      return res
+        .json({
+          message: "El usuario ya existe",
+        })
+        .status(400);
+    }
 
-  return res
-    .json({
-      message: "Usuario creado exitosamente",
-    })
-    .status(201);
+    return res
+      .json({
+        message: "Error al crear el usuario, intentelo nuevamente",
+      })
+      .status(400);
+  }
 };
 
-export const login =async (req,res)=>{
-    const data =req.body;
+export const login = async (req, res) => {
+  // { "correo": "ederiveroman@gmail.com", "password": "Welcome123"}
+  const data = req.body;
 
-    const usuarioEncontrado=usuarios.find(
-        (usuario)=>usuario.correo===data.correo
-    );
-    if (!usuarioEncontrado){
-        return res.status(404).json({
-            message:"usuario no existe",
-        });
-    }
-    const resultado =bcrypt.compareSync(
-        data.password,
-        usuarioEncontrado.password
+  const usuarioEncontrado = await UsuarioModel.findOne({ correo: data.correo });
 
-    );
+  if (!usuarioEncontrado) {
+    return res.status(404).json({
+      message: "Usuario no existe",
+    });
+  }
 
-    if (resultado){
+  const resultado = bcrypt.compareSync(
+    data.password,
+    usuarioEncontrado.password
+  );
 
-        const payload={
-            correo:usuarioEncontrado.correo,
-            mensaje:'hola',
-        }
-        const token=jwt.sign(payload,"ultramegasupersecreto",{
-            expiresIn:"1h",
-        })
-        return res.json({
-            message:"Bienvenido",
-            content:token,
-        });
-    }   else{
-        return res.status(403).json({
-            message:"Usuariono existe",
-        });
-    }
+  if (resultado) {
+    // es la informacion adicional que usara la token
+    const payload = {
+      correo: usuarioEncontrado.correo,
+      mensaje: "hola",
+    };
+    // aca creo la token
+    const token = jwt.sign(payload, "ultramegasupersecreto", {
+      expiresIn: "1h",
+    });
 
+    return res.json({
+      message: "Bienvenido",
+      content: token,
+    });
+  } else {
+    return res.status(403).json({
+      message: "Usuario no existe",
+    });
+  }
 };
